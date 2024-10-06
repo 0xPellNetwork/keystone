@@ -103,6 +103,25 @@ func (ring Pkcs11Keyring) Key(label string) (*CryptoKey, error) {
 	return &newkey, nil
 }
 
+// NewPkcs11 returns a new Pkcs11Keyring structure when
+// given the configuration struct that describes the Pkcs11
+// token which holds the actual cryptographic keys.
+func NewPkcs11(cfg *crypto11.Config) (*Pkcs11Keyring, error) {
+        kr := Pkcs11Keyring{}
+        err := error(nil)
+
+        kr.ctx, err = crypto11.Configure(cfg)
+        if err != nil {
+                log.Printf("Slot configuration failed with %s", err.Error())
+                return nil, err
+        }
+
+        kr.ModulePath = cfg.Path
+        kr.TokenLabel = cfg.TokenLabel
+
+        return &kr, nil
+}
+
 // NewPkcs11FromConfig returns a new Pkcs11Keyring structure when
 // given the path to a configuration file that describes the Pkcs11
 // token which holds the actual cryptographic keys.
